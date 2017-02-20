@@ -10,6 +10,7 @@ import bs4
 import re
 from time import sleep
 
+func_caller = ''
 directory_crawler = 0
 real_directories = [
     elements for elements in os.listdir('.') if os.path.isdir(elements) == True
@@ -25,8 +26,9 @@ Pages using requests Module'''
 
 
 def request_Launcher(link, name='', year=''):
-    global directory_crawler
-    os.chdir(real_directories[-1])
+    if func_caller == '':
+        global directory_crawler
+        os.chdir(real_directories[-1])
     print 'Requesting for %s %s\n' % (name.upper(), year)
     r = requests.get(link)
     soup = bs4.BeautifulSoup(r.content, 'html.parser')
@@ -49,7 +51,8 @@ def request_Launcher(link, name='', year=''):
         directory_crawler += 1
         print 'Subtitles For (%s) [Not Found]\n' % name
     elif found_URL != '':
-        os.chdir(real_directories[directory_crawler])
+        if func_caller == '':
+            os.chdir(real_directories[directory_crawler])
         # Site URL + Obtained URL --> https://site.com +
         # /subtitles/name_for_movie
         obt_url = site + found_URL
@@ -89,9 +92,10 @@ def request_Launcher(link, name='', year=''):
                                     if chunk:
                                         f.write(chunk)
             num_of_sub += 1
-        os.chdir(real_directories[-1])
-        os.chdir(real_directories[directory_crawler + 1])
-        directory_crawler += 1
+        if func_caller == '':
+            os.chdir(real_directories[-1])
+            os.chdir(real_directories[directory_crawler + 1])
+            directory_crawler += 1
 
         print 'File Name Generated is ---> %s\n' % name
         r.close()
@@ -129,12 +133,11 @@ def folder_SubDownload():
                 for removal in directories:
                     if removal.endswith('.srt'):
                         directories.remove(removal)  # Edited
+        # Windows OS 'Removing \ (BackSlash) From Direcory List'
+        folder_removals = [i.replace('\\', '') for i in folder_removals if '\\' in i]
         for elements in folder_removals:
-            for elements_in_dir in directories:
-                if elements == elements_in_dir:
-                    directories.remove(elements)
-                # elif elements_in_dir == sub_Folder:
-                # 	directories.remove(elements_in_dir)
+            directories.remove(elements)
+            real_directories.remove(elements)
     for keywords in filters:
         directories = [
             i.replace('.', ' ')
@@ -161,6 +164,8 @@ def folder_SubDownload():
                 ]
         except:
             continue
+    print directories
+    raw_input()
     for elements in directories:
         digitsRegex = re.compile(r'(\d\d\d\d)')
         container = digitsRegex.search(elements)
@@ -246,6 +251,7 @@ if qs == 1:
 elif qs == 2:
     folder_SubDownload()
 elif qs == 3:
+    func_caller += 'Custom'
     custom_SubGrabber()
 else:
     print('Wrong Option')
