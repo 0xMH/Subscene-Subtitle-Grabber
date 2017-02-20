@@ -10,8 +10,7 @@ import bs4
 import re
 from time import sleep
 
-movee = 0
-check = ''
+directory_crawler = 0
 real_directories = [
     elements for elements in os.listdir('.') if os.path.isdir(elements) == True
 ]
@@ -26,7 +25,8 @@ Pages using requests Module'''
 
 
 def request_Launcher(link, name='', year=''):
-    global movee
+    global directory_crawler
+    os.chdir(real_directories[-1])
     print 'Requesting for %s %s\n' % (name.upper(), year)
     r = requests.get(link)
     soup = bs4.BeautifulSoup(r.content, 'html.parser')
@@ -45,9 +45,11 @@ def request_Launcher(link, name='', year=''):
                                                                    '').lower():
             continue
     if found_URL == '':
+        os.chdir(real_directories[-1])
+        directory_crawler += 1
         print 'Subtitles For (%s) [Not Found]\n' % name
-        movee += 1
     elif found_URL != '':
+        os.chdir(real_directories[directory_crawler])
         # Site URL + Obtained URL --> https://site.com +
         # /subtitles/name_for_movie
         obt_url = site + found_URL
@@ -68,9 +70,9 @@ def request_Launcher(link, name='', year=''):
                 else:
                     continue
         sublist = ['https://subscene.com' + i for i in lst]
-        num = 1
+        num_of_sub = 1
         for subtitles in sublist:
-            if num <= sub_num:
+            if num_of_sub <= sub_num:
                 r = requests.get(subtitles)
                 soup2 = bs4.BeautifulSoup(r.content, 'html.parser')
                 for div in soup2.find_all('div', {'class': 'download'}):
@@ -81,25 +83,19 @@ def request_Launcher(link, name='', year=''):
                         fname = re.findall("filename=(.+)", d)  # File Name
                         for found_sub in fname:
                             name = found_sub.replace('-', ' ')
-                            if check != '' and movee < len(
-                                    real_directories) - 1:
-                                os.chdir(real_directories[movee])
-                                with open(name, 'wb') as f:
-                                    for chunk in r.iter_content(
-                                            chunk_size=150):
-                                        if chunk:
-                                            f.write(chunk)
-                            else:
-                                with open(name, 'wb') as f:
-                                    for chunk in r.iter_content(
-                                            chunk_size=150):
-                                        if chunk:  # filter out keep-alive new chunks
-                                            f.write(chunk)
-                            os.chdir(real_directories[-1])
-                            movee += 1
+                            with open(name, 'wb') as f:
+                                for chunk in r.iter_content(
+                                        chunk_size=150):
+                                    if chunk:
+                                        f.write(chunk)
+            num_of_sub += 1
+        os.chdir(real_directories[-1])
+        os.chdir(real_directories[directory_crawler + 1])
+        directory_crawler += 1
+
         print 'File Name Generated is ---> %s\n' % name
         r.close()
-        num += 1
+        num_of_sub += 1
         sleep(1)
     else:
         pass
@@ -197,21 +193,6 @@ def custom_SubGrabber():
     request_Launcher(url, name, year)
 
 
-'''Moves Subtitles To The
-Subtitle Created Folder'''
-# def sub_Mover():
-#     for folders, subfolders, files in os.walk('.'):
-#         for elements in files:
-#             if fnmatch.fnmatch(elements, '*.zip'):
-#                 try:
-#                     shutil.move(elements, sub_Folder)
-#                 except:
-#                     pass
-#             elif fnmatch.fnmatch(elements, '*.rar'):
-#                 try:
-#                     shutil.move(elements, sub_Folder)
-#                 except:
-#                     pass
 '''Gets Media File Runtime / Duration
 to be searched on IMDB for desired movie
 name. For Eg: Johnny English (with no year
@@ -263,7 +244,6 @@ qs = int(
 if qs == 1:
     folderCreator()
 elif qs == 2:
-    check += 'abc'
     folder_SubDownload()
 elif qs == 3:
     custom_SubGrabber()
