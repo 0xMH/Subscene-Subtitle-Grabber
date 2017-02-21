@@ -2,10 +2,8 @@
 This program makes your **Subtitles Search** easier by automating the process.
 
 # Preview:
-# SplashScreen:
-<div style='position:relative;padding-bottom:57%'><iframe src='https://gfycat.com/ifr/BraveLikableHumpbackwhale' frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen></iframe></div>
 
-<div style='position:relative;padding-bottom:57%'><iframe src='https://gfycat.com/ifr/BraveLikableHumpbackwhale' frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen></iframe></div>
+![alt tag](https://gfycat.com/ifr/BraveLikableHumpbackwhale)
 
 # Usage:
 
