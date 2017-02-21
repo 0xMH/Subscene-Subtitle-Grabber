@@ -3,7 +3,7 @@ This program makes your **Subtitles Search** easier by automating the process.
 
 # Preview:
 
-![](<div class='gfyitem' data-id='BraveLikableHumpbackwhale'></div>)
+![](http://i.imgur.com/8Aigy41.gifv)
 
 # Usage:
 
