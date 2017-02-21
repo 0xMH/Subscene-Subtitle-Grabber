@@ -3,7 +3,7 @@ This program makes your **Subtitles Search** easier by automating the process.
 
 # Preview:
 
-![alt tag](https://gfycat.com/ifr/BraveLikableHumpbackwhale)
+![](<div class='gfyitem' data-id='BraveLikableHumpbackwhale'></div>)
 
 # Usage:
 
