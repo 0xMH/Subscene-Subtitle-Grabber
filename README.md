@@ -19,6 +19,15 @@ Subtitles will be downloaded in Current Working Directory.
 - It is Convenient to first Create folders for Media Extensions by selecting 3rd Option.
 - Select Downloading Subtitles for a folder Option.
 
+# Requirements:
+
+- Python 2.7
+- Requests, Beautiful Soup
+
+Requests and Beautiful Soup can be install using pip.
+- pip install bs4
+- pip install requests
+
 # Installation:
 
 Clone the repository by clicking on the Clone / Download Button.
