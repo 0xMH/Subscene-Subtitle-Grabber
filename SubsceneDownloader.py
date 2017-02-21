@@ -36,16 +36,13 @@ def request_Launcher(link, name='', year=''):
     '''Obtains First URL of the Search
     Literal on the Webpage (Keyword Searched For). If
     no Url Found found_URL remains empty string.'''
-    for link in soup.find_all('a'):
-        if name.strip(year).lower() in link.text.replace(
-                ':', '').lower() and year in link.text.replace(':',
-                                                               '').lower():
-            found_URL = link.get('href')  # Obtaining First URL
-            break
-        elif name.lower() not in link.text.replace(
-                ':', '').lower() and year not in link.text.replace(':',
-                                                                   '').lower():
-            continue
+    for link in soup.find_all('div', {'class': 'title'}):
+        for nlink in link.find_all('a'):
+            if name.strip(year).lower() in nlink.text.replace(':', '').lower() and year in nlink.text.replace(':', '').lower():
+                found_URL = nlink.get('href')  # Obtaining First URL
+                break
+            elif name.lower() not in nlink.text.replace(':', '').lower() and year not in nlink.text.replace(':', '').lower():
+                continue
     if found_URL == '':
         os.chdir(real_directories[-1])
         directory_crawler += 1
@@ -66,12 +63,13 @@ def request_Launcher(link, name='', year=''):
     	Count Variable checks for the number of links to be downloaded
     	(Subtitles Number To Be Downloaded)'''
         for links in soup1.find_all('a'):
-            if 'english' in links.get('href') and count <= sub_num:
-                if links.get('href') not in lst:
-                    lst.append(links.get('href'))
-                    count += 1
-                else:
-                    continue
+            for nlinks in links.find_all('span', {'class': 'l r positive-icon'}):
+                    if 'English' in nlinks.text and count <= sub_num:
+                        if links.get('href') not in lst:
+                            lst.append(links.get('href'))
+                            count += 1
+                    else:
+                        continue
         sublist = ['https://subscene.com' + i for i in lst]
         num_of_sub = 1
         for subtitles in sublist:
@@ -91,16 +89,20 @@ def request_Launcher(link, name='', year=''):
                                         chunk_size=150):
                                     if chunk:
                                         f.write(chunk)
+                print 'File Name Generated is ---> %s\n' % name
             num_of_sub += 1
+            try:
+                with zipfile.ZipFile(name, "r") as z:
+                    z.extractall(".")
+                os.remove(name)
+            except:
+                pass
         if func_caller == '':
             os.chdir(real_directories[-1])
             os.chdir(real_directories[directory_crawler + 1])
             directory_crawler += 1
-
-        print 'File Name Generated is ---> %s\n' % name
         r.close()
         num_of_sub += 1
-        sleep(1)
     else:
         pass
 
@@ -134,10 +136,12 @@ def folder_SubDownload():
                     if removal.endswith('.srt'):
                         directories.remove(removal)  # Edited
         # Windows OS 'Removing \ (BackSlash) From Direcory List'
-        folder_removals = [i.replace('\\', '') for i in folder_removals if '\\' in i]
-        for elements in folder_removals:
-            directories.remove(elements)
-            real_directories.remove(elements)
+    for elements in folder_removals:
+        if '\\' in elements:
+            folder_removals = [i.replace('\\', '') for i in folder_removals]
+    for elements in folder_removals:
+        directories.remove(elements)
+        real_directories.remove(elements)
     for keywords in filters:
         directories = [
             i.replace('.', ' ')
@@ -164,8 +168,6 @@ def folder_SubDownload():
                 ]
         except:
             continue
-    print directories
-    raw_input()
     for elements in directories:
         digitsRegex = re.compile(r'(\d\d\d\d)')
         container = digitsRegex.search(elements)
