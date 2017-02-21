@@ -139,9 +139,12 @@ def folder_SubDownload():
     for elements in folder_removals:
         if '\\' in elements:
             folder_removals = [i.replace('\\', '') for i in folder_removals]
+        else:
+            break
     for elements in folder_removals:
-        directories.remove(elements)
-        real_directories.remove(elements)
+        if elements in directories:
+            directories.remove(elements)
+            real_directories.remove(elements)
     for keywords in filters:
         directories = [
             i.replace('.', ' ')
