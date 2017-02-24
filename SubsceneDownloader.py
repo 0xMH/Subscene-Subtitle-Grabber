@@ -64,7 +64,7 @@ def request_Launcher(link, name='', year=''):
     	(Subtitles Number To Be Downloaded)'''
         for links in soup1.find_all('a'):
             for nlinks in links.find_all('span', {'class': 'l r positive-icon'}):
-                    if 'English' in nlinks.text and count <= sub_num:
+                    if 'English' in nlinks.text and 'Trailer' not in count <= sub_num:
                         if links.get('href') not in lst:
                             lst.append(links.get('href'))
                             count += 1
