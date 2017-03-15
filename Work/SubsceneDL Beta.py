@@ -1,3 +1,6 @@
+import subprocess
+import shlex
+import json
 import shutil
 import zipfile
 import re
@@ -5,6 +8,7 @@ import requests
 import bs4
 import os
 import fnmatch
+from time import sleep
 
 real_directory = []
 
@@ -18,24 +22,56 @@ def urlGenerator(name, year = ''):
         else:
             return search + name.replace(' ', '+')
 
+def createFolder():
+    # Create Folders For Movies
+    for folders, subfolders, files in os.walk('.'):
+        try:
+            for element in files:
+                if fnmatch.fnmatch(element, '*.mp4'):
+                    os.mkdir(element.strip('.mp4'))
+                    shutil.move(element, element.strip('.mp4'))
+                elif fnmatch.fnmatch(element, '*.mkv'):
+                    os.mkdir(element.strip('.mkv'))
+                    shutil.move(element, element.strip('.mkv'))
+                elif fnmatch.fnmatch(element, '*.avi'):
+                    os.mkdir(element.strip('.avi'))
+                    shutil.move(element, element.strip('.avi'))
+                else:
+                    break
+        except:
+                break
 
-def movieTitleFinder(link):
-    # Gets Movie Subtitle Name
+
+def deepSearch():
+    # Slow But More Precise Method.
+    # If Len of title matches about 80 % of the search query name download the subtitle
     pass
 
 
-def downloadStatus():
-    # Progress Bar For Subtitles Completion!
+def simpleSearch():
+    # Fast But Less Precise Method.
+    '''Takes Direct Movie Name for eg: Doctor.Strange.2016.Bluray.H.264-Nezu.mp4
+    and Search on the site, if found Download Subtitle for it'''
     pass
+
 
 def imdbYearObtainer():
     # If there is no Year in the Movie Name File, Get the Year From Imdb by checking the Runtime of the movie
     pass
 
 
-def getMovieRuntime():
+def getMovieRuntime(moviefile):
     # Obtains movie Runtime For Cross-Check from IMDB i.e. Obtaining Movie Year
-    pass
+    cmd = 'ffprobe -show_entries format=duration -v quiet -of csv="p=0"'
+    args = shlex.split(cmd)  # Creating a List of the Command and its Parameters
+    args.append(file_path_with_file_name)  # Appending File to the Arguments list
+    # run the ffprobe process, decode stdout into utf-8 & convert to JSON
+    ffprobe_output = subprocess.check_output(args).decode('utf-8')
+
+    ffprobe_output = json.loads(ffprobe_output)  # Returns Duration in Seconds
+    minutes = ffprobe_output // 60
+    hours = minutes // 60
+    print 'Hours %s and Minutes %s' % (hours, minutes)
 
 
 def nameFinder(name, year, link):
@@ -175,10 +211,15 @@ def subRenamer():
     pass
 
 if __name__ == "__main__":
-    search = "https://subscene.com/subtitles/title?q="
-    real_directory = directoryObtainer()
-    names = nameGrabber(real_directory)
-    directorySubDL(names, real_directory)
-    # movieName = raw_input('Enter Movie Name: ')
-    # movieYear = raw_input('Enter Movie Release Year: ')
-    # movieSubDL(movieName, movieYear)
+    makeChoice = int(raw_input("For Downloading Subtitles in A Directory Press 1\nPress 2 For Download Subtitles For a Custom Movie: "))
+    if makeChoice == 1:
+        search = "https://subscene.com/subtitles/title?q="
+        real_directory = directoryObtainer()
+        names = nameGrabber(real_directory)
+        directorySubDL(names, real_directory)
+    elif makeChoice == 2:
+        movieName = raw_input('Enter Movie Name: ')
+        movieYear = raw_input('Enter Movie Release Year: ')
+        movieSubDL(movieName, movieYear)
+    else:
+        print 'Invalid Choice!'
