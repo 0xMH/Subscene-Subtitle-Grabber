@@ -14,13 +14,12 @@ real_directory = []
 
 def urlGenerator(name, year = ''):
     # Generates Url for Site
-    if year != '':
+    if name[-1] != ' ':
         return search + name.replace(' ', '+') + '+' + year
+    elif year == '':
+        return search + name.replace(' ', '+')[:-1]
     else:
-        if name[-1] == ' ':
-            return search + name.replace(' ', '+')[:-1]
-        else:
-            return search + name.replace(' ', '+')
+        return search + name.replace(' ', '+')[:-1] + '+' + year
 
 def createFolder():
     # Create Folders For Movies
@@ -39,7 +38,7 @@ def createFolder():
                 else:
                     break
         except:
-                break
+            pass
 
 
 def deepSearch():
@@ -138,14 +137,25 @@ def downloader(elements):
                     f.write(chunk)
         zipExtractor(name)
 
+def getExtension(name):
+    ext = ['.mp4', '.mkv', '.avi']
+    if '.mp4' in name or '.mkv' in name or '.avi' in name:
+        for elements in ext:
+            if elements in name:
+                return name.replace(elements,'')
+    else:
+        return name
+
+
+
 def movieSubDL(mediaName, mediaYear = ''):
     # For Downloading Subtitle For Required Movie
-    mediaName = mediaName[:-4] # Removes Extension eg. --> .mp4
+    mediaName = getExtension(mediaName) # Removes Extension eg. --> .mp4
     firstUrl = urlGenerator(mediaName, mediaYear)
     print 'Search URL is ', firstUrl
     query = nameFinder(mediaName, mediaYear, firstUrl)  # List Of Elements
     print 'Query is ', query
-    downlinks = downLinkFinder(query, 3)
+    downlinks = downLinkFinder(query, 1)
     for elements in downlinks:
         downloader(elements=elements)
 
@@ -166,6 +176,7 @@ def nameGrabber(medialst):
         except:
             nameslist.append(movies.lower())
             continue
+    nameslist = [i.replace('.', ' ') for i in nameslist]
     return nameslist
 
 
@@ -201,18 +212,20 @@ def subChecker(directory):
     for folders, subfolders, files in os.walk(directory):
         for elements in files:
             if fnmatch.fnmatch(elements, '*.srt'):
-                print folders.replace('./', '')
+                real_directory.remove(folders.replace('./', ''))
             elif fnmatch.fnmatch(elements, '*.py'):
-                print folders.replace('./', '')
+                real_directory.remove(folders.replace('./', ''))
 
 
 def subRenamer():
     # Rename Subtitle Downloaded To the Media File Name for auto-Sync
     pass
 
+
 if __name__ == "__main__":
     makeChoice = int(raw_input("For Downloading Subtitles in A Directory Press 1\nPress 2 For Download Subtitles For a Custom Movie: "))
     if makeChoice == 1:
+        createFolder()
         search = "https://subscene.com/subtitles/title?q="
         real_directory = directoryObtainer()
         names = nameGrabber(real_directory)
