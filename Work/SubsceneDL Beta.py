@@ -14,10 +14,13 @@ real_directory = []
 
 def urlGenerator(name, year = ''):
     # Generates Url for Site
-    if name[-1] != ' ':
+    if name[-1] != ' ' and year != '':
         return search + name.replace(' ', '+') + '+' + year
     elif year == '':
-        return search + name.replace(' ', '+')[:-1]
+        if name[-1] == ' ':
+            return search + name.replace(' ', '+')[:-1]
+        else:
+            return search + name.replace(' ', '+')
     else:
         return search + name.replace(' ', '+')[:-1] + '+' + year
 
@@ -202,10 +205,20 @@ def directoryObtainer():
     return real_directory
 
 
+def locateFileFolder(filename):
+    for folders, subfolders, files in os.walk('.'):
+        if filename in files:
+            os.chdir('../')
+            return os.getcwd()
+
+
 def directorySubDL(movieNames, movieDirectory):
     # For Downloading Subtitles for movies in a Directory
+    cwd = os.getcwd()
     for elements in movieNames:
+        os.chdir(elements)
         movieSubDL(elements)
+        os.chdir(cwd)
 
 
 def subChecker(directory):
@@ -224,9 +237,9 @@ def subRenamer():
 
 if __name__ == "__main__":
     makeChoice = int(raw_input("For Downloading Subtitles in A Directory Press 1\nPress 2 For Download Subtitles For a Custom Movie: "))
+    search = "https://subscene.com/subtitles/title?q="
     if makeChoice == 1:
         createFolder()
-        search = "https://subscene.com/subtitles/title?q="
         real_directory = directoryObtainer()
         names = nameGrabber(real_directory)
         directorySubDL(names, real_directory)
