@@ -14,20 +14,19 @@ real_directory = []
 
 def createFolder():
     # Create Folders For Movies
-    for folders, subfolders, files in os.walk('.'):
+    for files in os.listdir('.'):
         try:
-            for element in files:
-                if fnmatch.fnmatch(element, '*.mp4'):
-                    os.mkdir(element.strip('.mp4'))
-                    shutil.move(element, element.strip('.mp4'))
-                elif fnmatch.fnmatch(element, '*.mkv'):
-                    os.mkdir(element.strip('.mkv'))
-                    shutil.move(element, element.strip('.mkv'))
-                elif fnmatch.fnmatch(element, '*.avi'):
-                    os.mkdir(element.strip('.avi'))
-                    shutil.move(element, element.strip('.avi'))
-                else:
-                    break
+            if files.endswith('.mp4'):
+                os.mkdir(files.strip('.mp4'))
+                shutil.move(files, files.strip('.mp4'))
+            elif files.endswith('.mkv'):
+                os.mkdir(files.strip('.mkv'))
+                shutil.move(files, files.strip('.mkv'))
+            elif files.endswith('.avi'):
+                os.mkdir(files.strip('.avi'))
+                shutil.move(files, files.strip('.avi'))
+            else:
+                break
         except:
             pass
 
@@ -65,10 +64,8 @@ def getMovieRuntime(moviefile):
 
 
 def nameFinder(name, year, parameter):
-    print 'Searching For Name: %s, Year: %s, Params: %s' % (name,year,parameter)
-    raw_input()
     r = requests.get(search, {'q': parameter})
-    print r.url
+    # print 'Generated URL is ---> %s' % r.url
     soup = bs4.BeautifulSoup(r.content, 'html.parser')
     foundUrl = ''
     for movieName in soup.find_all('div', {'class': 'title'}):
@@ -84,6 +81,7 @@ def nameFinder(name, year, parameter):
     if foundUrl == '':
         print 'Subtitles Not Found For The Movie (%s).' % name.capitalize()
     return 'https://subscene.com' + foundUrl
+
 
 
 def downLinkFinder(link, count = 1):
@@ -144,10 +142,11 @@ def removeExtension(name):
 def movieSubDL(mediaName, mediaYear = ''):
     # For Downloading Subtitle For Required Movie
     mediaName = removeExtension(mediaName) # Removes Extension eg. --> .mp4
-    parameters = mediaName + ' ' + mediaYear
-    print mediaName, parameters, mediaYear
+    if mediaYear == '':
+        parameters = mediaName
+    else:
+        parameters = mediaName + ' ' + mediaYear
     query = nameFinder(mediaName, mediaYear, parameters)  # List Of Elements
-    print 'Query is ', query
     downlinks = downLinkFinder(query, 1)
     for elements in downlinks:
         downloader(elements)
@@ -263,7 +262,7 @@ Press [2] - For Download Subtitles For a Custom Movie:\n\
 Your Input [-]:  "))
     search = "https://subscene.com/subtitles/title"
     if makeChoice == 1:
-        # createFolder()
+        createFolder()
         real_directory = directoryObtainer()
         newdir = subChecker(real_directory)
         names = nameGrabber(newdir)
