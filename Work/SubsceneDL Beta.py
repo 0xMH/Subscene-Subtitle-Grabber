@@ -12,18 +12,6 @@ from time import sleep
 
 real_directory = []
 
-def urlGenerator(name, year = ''):
-    # Generates Url for Site
-    if name[-1] != ' ' and year != '':
-        return search + name.replace(' ', '+') + '+' + year
-    elif year == '':
-        if name[-1] == ' ':
-            return search + name.replace(' ', '+')[:-1]
-        else:
-            return search + name.replace(' ', '+')
-    else:
-        return search + name.replace(' ', '+')[:-1] + '+' + year
-
 def createFolder():
     # Create Folders For Movies
     for folders, subfolders, files in os.walk('.'):
@@ -76,14 +64,17 @@ def getMovieRuntime(moviefile):
     print 'Hours %s and Minutes %s' % (hours, minutes)
 
 
-def nameFinder(name, year, link):
-    r = requests.get(link)
+def nameFinder(name, year, parameter):
+    print 'Searching For Name: %s, Year: %s, Params: %s' % (name,year,parameter)
+    raw_input()
+    r = requests.get(search, {'q': parameter})
+    print r.url
     soup = bs4.BeautifulSoup(r.content, 'html.parser')
     foundUrl = ''
     for movieName in soup.find_all('div', {'class': 'title'}):
         for searchQuery in movieName.find_all('a'):
             searchStr = searchQuery.text.replace(':', '').lower()
-            if name in searchStr and year in searchStr:
+            if name.lower() in searchStr and year in searchStr:
                 foundUrl = searchQuery.get('href')  # Obtaining First URL
                 break
             elif name.lower() not in searchStr and year not in searchStr:
@@ -122,8 +113,8 @@ def zipExtractor(name):
     except:
         pass
 
-def downloader(elements):
-    r = requests.get(elements)
+def downloader(links):
+    r = requests.get(links)
     soup = bs4.BeautifulSoup(r.content, 'html.parser')
     for div in soup.find_all('div', {'class': 'download'}):
         for link in div.find_all('a'):
@@ -140,7 +131,7 @@ def downloader(elements):
                     f.write(chunk)
         zipExtractor(name)
 
-def getExtension(name):
+def removeExtension(name):
     ext = ['.mp4', '.mkv', '.avi']
     if '.mp4' in name or '.mkv' in name or '.avi' in name:
         for elements in ext:
@@ -150,17 +141,16 @@ def getExtension(name):
         return name
 
 
-
 def movieSubDL(mediaName, mediaYear = ''):
     # For Downloading Subtitle For Required Movie
-    mediaName = getExtension(mediaName) # Removes Extension eg. --> .mp4
-    firstUrl = urlGenerator(mediaName, mediaYear)
-    print 'Search URL is ', firstUrl
-    query = nameFinder(mediaName, mediaYear, firstUrl)  # List Of Elements
+    mediaName = removeExtension(mediaName) # Removes Extension eg. --> .mp4
+    parameters = mediaName + ' ' + mediaYear
+    print mediaName, parameters, mediaYear
+    query = nameFinder(mediaName, mediaYear, parameters)  # List Of Elements
     print 'Query is ', query
     downlinks = downLinkFinder(query, 1)
     for elements in downlinks:
-        downloader(elements=elements)
+        downloader(elements)
 
 def nameGrabber(medialst):
     # Gets the Name of the movie whose subtitle needs to be Downloaded!
@@ -237,7 +227,7 @@ def subRenamer():
 
 if __name__ == "__main__":
     makeChoice = int(raw_input("For Downloading Subtitles in A Directory Press 1\nPress 2 For Download Subtitles For a Custom Movie: "))
-    search = "https://subscene.com/subtitles/title?q="
+    search = "https://subscene.com/subtitles/title"
     if makeChoice == 1:
         createFolder()
         real_directory = directoryObtainer()
