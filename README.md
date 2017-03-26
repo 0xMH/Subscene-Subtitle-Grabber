@@ -18,19 +18,14 @@ Eg:
 
 Subtitles will be downloaded in Current Working Directory.
 
-**For Downloading Subtitles For Movies in a Folder:**
+# More Information:
 
-- It is Convenient to first Create folders for Media Extensions by selecting 3rd Option.
-- Select Downloading Subtitles for a folder Option.
+- Read the Wiki
 
 # Requirements:
 
 - Python 2.7
 - Requests, Beautiful Soup
-
-Requests and Beautiful Soup can be install using pip.
-- pip install bs4
-- pip install requests
 
 # Installation:
 
