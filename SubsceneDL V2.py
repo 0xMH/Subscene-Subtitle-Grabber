@@ -258,7 +258,9 @@ def subRenamer():
 
 
 if __name__ == "__main__":
-    makeChoice = int(raw_input("For Downloading Subtitles in A Directory Press 1\nPress 2 For Download Subtitles For a Custom Movie: "))
+    makeChoice = int(raw_input("Press [1] - For Downloading Subtitles in A Directory.\n\
+Press [2] - For Download Subtitles For a Custom Movie:\n\
+Your Input [-]:  "))
     search = "https://subscene.com/subtitles/title"
     if makeChoice == 1:
         # createFolder()
