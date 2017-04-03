@@ -1,8 +1,8 @@
-'''Version = 2
-@Author = Rafay Ghafoor
-@Email = rafayghafoor@protonmail.com
-@Date Created = Feb 19, 2017 (Version 1)
-@Updated = March 26, 2017
+'''Version = 1
+Author = Rafay Ghafoor
+Email = rafayghafoor@protonmail.com
+Date Created = Feb 19, 2017 (Version 1)
+Updated = March 26, 2017
 '''
 import subprocess
 import shlex
