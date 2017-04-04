@@ -32,7 +32,7 @@ def createFolder():
                 os.mkdir(files.strip('.avi'))
                 shutil.move(files, files.strip('.avi'))
             else:
-                break
+                continue
         except:
             pass
 
@@ -71,7 +71,7 @@ def getMovieRuntime(moviefile):
 
 def nameFinder(name, year, parameter):
     r = requests.get(search, {'q': parameter})
-    # print 'Generated URL is ---> %s' % r.url
+    print 'Generated URL is ---> %s\n' % r.url
     soup = bs4.BeautifulSoup(r.content, 'html.parser')
     foundUrl = ''
     for movieName in soup.find_all('div', {'class': 'title'}):
@@ -85,9 +85,9 @@ def nameFinder(name, year, parameter):
         if foundUrl != '':
             break
     if foundUrl == '':
-        print 'Subtitles Not Found For The Movie (%s).' % name.capitalize()
-    return 'https://subscene.com' + foundUrl
-
+        print 'Subtitles Not Found for the Movie (%s).\n' % name.title()
+    else:
+        return 'https://subscene.com' + foundUrl
 
 
 def downLinkFinder(link, count = 1):
@@ -136,26 +136,37 @@ def downloader(links):
         zipExtractor(name)
 
 def removeExtension(name):
-    ext = ['.mp4', '.mkv', '.avi']
-    if '.mp4' in name or '.mkv' in name or '.avi' in name:
-        for elements in ext:
-            if elements in name:
-                return name.replace(elements,'')
-    else:
+    ext = ['mp4', 'mkv', 'avi']
+    newvar = ''
+    for elements in ext:
+        if elements in name:
+            newvar = name.replace(elements,'')
+            break
+        else:
+            continue
+    if newvar == '':
         return name
+    else:
+        return newvar
 
 
-def movieSubDL(mediaName, mediaYear = ''):
+
+def movieSubDL(mediaName = '', mediaYear = ''):
     # For Downloading Subtitle For Required Movie
     mediaName = removeExtension(mediaName) # Removes Extension eg. --> .mp4
-    if mediaYear == '':
-        parameters = mediaName
+    parameters = mediaName
+    if parameters[-1] == ' ':
+        parameters = parameters[:-1]
     else:
         parameters = mediaName + ' ' + mediaYear
     query = nameFinder(mediaName, mediaYear, parameters)  # List Of Elements
-    downlinks = downLinkFinder(query, 1)
-    for elements in downlinks:
-        downloader(elements)
+    if query != None:
+        downlinks = downLinkFinder(query, 1)
+        for elements in downlinks:
+            print '[*] - Downloading Subtitle For %s' % (mediaName + mediaYear)
+            downloader(elements)
+            print '[+] - Subtitle Downloaded!'
+
 
 def nameGrabber(medialst):
     # Gets the Name of the movie whose subtitle needs to be Downloaded!
@@ -230,7 +241,13 @@ def directorySubDL(movieNames, movieDirectory):
         # os.chdir(elements)
         location = fileLocator(real_directory[num])
         os.chdir(location)
-        movieSubDL(elements)
+        try:
+            yearRegex = re.compile(r'\d{4}')
+            searchItems = yearRegex.search(movies)
+            movieYear = searchItems.group()
+        except:
+            movieYear = ''
+        movieSubDL(elements, movieYear)
         os.chdir(cwd)
         if num != len(real_directory) - 1:
             num += 1
