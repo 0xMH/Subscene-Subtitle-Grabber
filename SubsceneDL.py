@@ -260,7 +260,7 @@ def subRenamer():
     pass
 
 
-if __name__ == "__main__":
+def main():
     makeChoice = int(raw_input("Press [1] - For Downloading Subtitles in A Directory.\n\
 Press [2] - For Download Subtitles For a Custom Movie:\n\
 Your Input [-]:  "))
