@@ -30,3 +30,7 @@ Subtitles will be downloaded in Current Working Directory.
 # Installation:
 
 Clone the repository by clicking on the Clone / Download Button.
+
+Or Install by Pip:-
+
+** pip install sub-dl**
