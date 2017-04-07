@@ -7,7 +7,7 @@ This program makes your **Subtitles Search** easier by automating the process.
 
 # Usage:
 
-python SubsceneDownloader.py
+`python SubsceneDownloader.py`
 
 **For Downloading Custom Movie Run:-**
 
@@ -33,4 +33,4 @@ Clone the repository by clicking on the Clone / Download Button.
 
 Or Install by Pip:-
 
-** pip install sub-dl**
+`pip install sub-dl`
