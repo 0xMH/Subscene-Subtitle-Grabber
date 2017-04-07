@@ -17,24 +17,21 @@ import fnmatch
 from time import sleep
 
 real_directory = []
+ext = ['.mp4', '.mkv', '.avi']
 
 def createFolder():
     # Create Folders For Movies
+    global ext
     for files in os.listdir('.'):
-        try:
-            if files.endswith('.mp4'):
-                os.mkdir(files.strip('.mp4'))
-                shutil.move(files, files.strip('.mp4'))
-            elif files.endswith('.mkv'):
-                os.mkdir(files.strip('.mkv'))
-                shutil.move(files, files.strip('.mkv'))
-            elif files.endswith('.avi'):
-                os.mkdir(files.strip('.avi'))
-                shutil.move(files, files.strip('.avi'))
-            else:
-                continue
-        except:
-            pass
+        for extension in ext:
+            try:
+                if files.endswith(extension):
+                    os.mkdir(files.strip(extension))
+                    shutil.move(files, files.strip(extension))
+                else:
+                    continue
+            except:
+                pass
 
 
 def deepSearch():
@@ -44,7 +41,7 @@ def deepSearch():
 
 
 def simpleSearch():
-    # Fast But Less Precise Method.
+    # Fast But Lesss Precise Method.
     '''Takes Direct Movie Name for eg: Doctor.Strange.2016.Bluray.H.264-Nezu.mp4
     and Search on the site, if found Download Subtitle for it'''
     pass
@@ -90,22 +87,22 @@ def nameFinder(name, year, parameter):
         return 'https://subscene.com' + foundUrl
 
 
-def downLinkFinder(link, count = 1):
+def downLinkFinder(page_link, count = 1):
     # Interaction with Site using Requests
-    r = requests.get(link)
-    subtitlesLst = []
+    r = requests.get(page_link)
+    sub_list = []   # Subtitles List
     # Searching Page For Getting the Correct Movie Name
-    num = 1
+    link_num = 1
     soup = bs4.BeautifulSoup(r.content, 'html.parser')
     for link in soup.find_all('td', {'class': 'a1'}):
-        for engLink in link.find_all('span', {'class': 'l r positive-icon'}):
-            for downLink in link.find_all('a'):
-                if num <= count:
-                    if 'Trailer' not in link.text and 'English' in engLink.text:
-                        if downLink.get('href') not in subtitlesLst:
-                            subtitlesLst.append(downLink.get('href'))
-                            num += 1
-    return ['https://subscene.com' + i for i in subtitlesLst]
+        for eng_link in link.find_all('span', {'class': 'l r positive-icon'}):
+            for down_link in link.find_all('a'):
+                if link_num <= count:
+                    if 'Trailer' not in link.text and 'English' in eng_link.text:
+                        if down_link.get('href') not in sub_list:
+                            sub_list.append(down_link.get('href'))
+                            link_num += 1
+    return ['https://subscene.com' + i for i in sub_list]
 
 
 def zipExtractor(name):
@@ -117,13 +114,13 @@ def zipExtractor(name):
     except:
         pass
 
-def downloader(links):
-    r = requests.get(links)
+def downloader(dl_links):
+    r = requests.get(dl_links)
     soup = bs4.BeautifulSoup(r.content, 'html.parser')
     for div in soup.find_all('div', {'class': 'download'}):
         for link in div.find_all('a'):
-            downLink = 'https://subscene.com' + link.get('href')
-    r = requests.get(downLink, stream=True)
+            down_link = 'https://subscene.com' + link.get('href')
+    r = requests.get(down_link, stream=True)
     d = r.headers['content-disposition']
     fname = re.findall("filename=(.+)", d)  # File Name
     for found_sub in fname:
@@ -136,11 +133,11 @@ def downloader(links):
         zipExtractor(name)
 
 def removeExtension(name):
-    ext = ['mp4', 'mkv', 'avi']
+    global ext
     newvar = ''
-    for elements in ext:
-        if elements in name:
-            newvar = name.replace(elements,'')
+    for extension in ext:
+        if extension in name:
+            newvar = name.replace(extension,'')
             break
         else:
             continue
@@ -150,20 +147,17 @@ def removeExtension(name):
         return newvar
 
 
-
 def movieSubDL(mediaName = '', mediaYear = ''):
     # For Downloading Subtitle For Required Movie
     mediaName = removeExtension(mediaName) # Removes Extension eg. --> .mp4
-    parameters = mediaName
-    if parameters[-1] == ' ':
-        parameters = parameters[:-1]
-    else:
-        parameters = mediaName + ' ' + mediaYear
+    if mediaYear != '':
+        mediaName = mediaName.strip(mediaYear)
+    parameters = mediaName.strip(' ')
     query = nameFinder(mediaName, mediaYear, parameters)  # List Of Elements
     if query != None:
         downlinks = downLinkFinder(query, 1)
         for elements in downlinks:
-            print '[*] - Downloading Subtitle For %s' % (mediaName + mediaYear)
+            print '[*] - Downloading Subtitle For %s' % (mediaName.title() + mediaYear)
             downloader(elements)
             print '[+] - Subtitle Downloaded!'
 
@@ -179,43 +173,29 @@ def nameGrabber(medialst):
             # This is 2016 Movie --> This is | 2016 | Movie
             prev, found, removal = movies.partition(year)
             if prev[-1] == ' ':
-                nameslist.append(prev.lower())
+                nameslist.append(prev.lower() + found)
             else:
-                nameslist.append(prev.lower()[:-1])
+                nameslist.append(prev.lower()[:-1] + found)
         except:
-            nameslist.append(movies.lower())
+            nameslist.append(movies.lower() + found)
             continue
-    nameslist = [i.replace('.', ' ') for i in nameslist]
+    nameslist = [i.strip(' ') for i in nameslist]
     return nameslist
 
 
 def directoryObtainer():
     global real_directory
+    global ext
+
     for folders, subfolders, files in os.walk('.'):
         for elements in files:
-            if fnmatch.fnmatch(elements, '*.mp4'):
-                if './' in elements: # Linux OS
-                    real_directory.append(elements.replace('./', ''))
-                else: # Windows OS
-                    real_directory.append(elements)
-            elif fnmatch.fnmatch(elements, '*.mkv'):
-                if './' in elements:
-                    real_directory.append(elements)
-                else:
-                    real_directory.append(elements)
-            elif fnmatch.fnmatch(elements, '*.avi'):
-                if './' in elements:
-                    real_directory.append(elements)
-                else:
-                    real_directory.append(elements)
+            for extension in ext:
+                if elements.endswith(extension):
+                    if './' in elements:
+                        real_directory.append(elements.replace('./', ''))
+                    else:
+                        real_directory.append(elements)
     return real_directory
-
-
-def locateFileFolder(filename):
-    for folders, subfolders, files in os.walk('.'):
-        if filename in files:
-            os.chdir('../')
-            return os.getcwd()
 
 
 def fileLocator(name):
@@ -243,7 +223,7 @@ def directorySubDL(movieNames, movieDirectory):
         os.chdir(location)
         try:
             yearRegex = re.compile(r'\d{4}')
-            searchItems = yearRegex.search(movies)
+            searchItems = yearRegex.search(elements)
             movieYear = searchItems.group()
         except:
             movieYear = ''
@@ -258,7 +238,7 @@ def directorySubDL(movieNames, movieDirectory):
 def subChecker(directory):
     for folders, subfolders, files in os.walk('.'):
         for elements in files:
-            if elements.endswith('.srt'):
+            if elements.endswith('.srt') or elements.endswith('.ass'):
                 try:
                     for movies in files:
                         if movies.endswith('.mkv') or movies.endswith('.avi') or movies.endswith('.mp4'):
@@ -270,6 +250,7 @@ def subChecker(directory):
                     directory.remove(elements)
                 except:
                     pass
+    directory = [i.replace('.', ' ') for i in directory]
     return directory
 
 
