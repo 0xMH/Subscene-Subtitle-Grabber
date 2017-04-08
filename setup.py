@@ -8,7 +8,6 @@ setup(
     author = 'Rafay Ghafoor',
     author_email = 'rafayghafoor@protonmail.com',
     url = 'https://github.com/RafayGhafoor/Subscene-Subtitle-Grabber',
-    download_url = 'download link you saved',
     keywords = ['python', 'srt'],
     classifiers = [],
 )
