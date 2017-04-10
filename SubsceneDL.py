@@ -13,7 +13,6 @@ import re
 import requests
 import bs4
 import os
-import fnmatch
 from time import sleep
 
 real_directory = []
@@ -139,6 +138,7 @@ def zip_extractor(name):
     except:
         pass
 
+
 def downloader(dl_links):
     '''Downloads subtitles for the links obtained from the [Download Link Finder] (function).'''
     r = requests.get(dl_links)
@@ -157,6 +157,7 @@ def downloader(dl_links):
                 if chunk:
                     f.write(chunk)
         zip_extractor(name)
+
 
 def remove_ext(name):
     '''Removes extension from the movie file name.
@@ -215,7 +216,6 @@ def directory_obtainer():
     '''Gets movies names contained in a directory.'''
     global real_directory
     global ext
-
     for folders, subfolders, files in os.walk('.'):
         for elements in files:
             for extension in ext:
@@ -276,7 +276,6 @@ def sub_checker(directory):
                         else:
                             pass
     return directory
-
 
 
 def sub_renamer():
