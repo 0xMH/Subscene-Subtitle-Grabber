@@ -18,12 +18,20 @@ Eg:
 
 Subtitles will be downloaded in Current Working Directory.
 
+# TODO List:
+
+- [ ] Adding Support For More Languages.
+- [ ] AllSubDB, OpenSubtitles Search.
+- [ ] Implementation for Seasons episodes.
+- [ ] Auto-Sync (Best-Preffered Subtitle) for Movies.
+
 # More Information:
 
-- Read the Wiki
+- Read the [Wiki](https://github.com/RafayGhafoor/Subscene-Subtitle-Grabber/wiki)
 
 # Requirements:
 
+` pip install -r Requirements.txt`
 - Python 2.7
 - Requests, Beautiful Soup
 
@@ -31,3 +39,4 @@ Subtitles will be downloaded in Current Working Directory.
 
 Clone the repository by clicking on the Clone / Download Button.
 
+`git clone https://github.com/RafayGhafoor/Subscene-Subtitle-Grabber`
