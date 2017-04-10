@@ -183,7 +183,7 @@ def movie_subdl(mediaName = '', mediaYear = ''):
     if query != None:
         downlinks = downlink_finder(query, 1)
         for elements in downlinks:
-            print '[*] - Downloading Subtitle For %s' % (mediaName + mediaYear)
+            print '[*] - Downloading Subtitle For %s' % (mediaName.title())
             downloader(elements)
             print '[+] - Subtitle Downloaded!\n'
 
