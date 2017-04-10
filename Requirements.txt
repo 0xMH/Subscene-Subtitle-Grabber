@@ -1,3 +1,4 @@
-- Python 2.7
-- BeautifulSoup
-- Requests
+bs4
+requests
+shutil
+fnmatch
