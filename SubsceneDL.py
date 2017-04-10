@@ -185,7 +185,7 @@ def movie_subdl(mediaName = '', mediaYear = ''):
         for elements in downlinks:
             print '[*] - Downloading Subtitle For %s' % (mediaName + mediaYear)
             downloader(elements)
-            print '[+] - Subtitle Downloaded!'
+            print '[+] - Subtitle Downloaded!\n'
 
 
 def name_grabber(medialst):
@@ -271,7 +271,7 @@ def sub_checker(directory):
             if elements.endswith('.srt'):
                 for movies in files:
                     for extension in ext:
-                        if movies.endswith(ext):
+                        if movies.endswith(extension):
                             directory.remove(movies)
                         else:
                             pass
@@ -292,6 +292,7 @@ if __name__ == "__main__":
     makeChoice = int(raw_input("Press [1] - To download subtitles for movies in a directory.\n\
 Press [2] - To download subtitles For a custom movie:\n\
 Your Input [-]:  "))
+    print ''
     search = "https://subscene.com/subtitles/title"
     if makeChoice == 1:
         create_folder()
