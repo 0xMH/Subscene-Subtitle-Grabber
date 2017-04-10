@@ -1,8 +1,8 @@
-'''Version = 1
+'''Version = 1 (Beta)
 Author = Rafay Ghafoor
 Email = rafayghafoor@protonmail.com
 Date Created = Feb 19, 2017 (Version 1)
-Updated = March 26, 2017
+Updated = April 10, 2017
 '''
 import subprocess
 import shlex
@@ -232,7 +232,6 @@ def file_locator(name):
     right place.'''
     for files in os.listdir('.'):
         if files.endswith('.py') == False:
-            # if os.path.isdir(elements) == True:
             count = 0
             for folders, subfolders, files in os.walk('.'):
                 for elem in files:
